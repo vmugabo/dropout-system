@@ -35,6 +35,16 @@ function App() {
     }
   }, [session]);
 
+  // Set default page based on user role
+  useEffect(() => {
+    if (profile) {
+      if (profile.role === 'head') {
+        setPage('reports');
+      } else {
+        setPage('dashboard');
+      }
+    }
+  }, [profile]);
 
 
   // Fetch school, district, and classes for dropdown

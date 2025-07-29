@@ -117,86 +117,102 @@ function App() {
   };
 
   if (!session) return <Login onLogin={() => supabase.auth.getSession().then(({ data: { session } }) => setSession(session))} />;
-  if (profileError) return <div>Error loading profile: {profileError}</div>;
-  if (!profile) return <div>Loading profile...</div>;
+  if (profileError) return <div style={{ padding: '20px', textAlign: 'center' }}>Error loading profile: {profileError}</div>;
+  if (!profile) return <div style={{ padding: '20px', textAlign: 'center' }}>Loading profile...</div>;
 
-  // Navigation pane
-  return (
-    <div>
-      <nav style={{ display: 'flex', gap: 16, alignItems: 'center', background: '#1976d2', color: '#fff', padding: '12px 24px', marginBottom: 32, position: 'relative' }}>
-        <span style={{ fontWeight: 700, fontSize: 20, letterSpacing: 1 }}>Komeza Wige</span>
-        {profile.role !== 'head' && (
-          <button onClick={() => setPage('dashboard')} style={{ marginLeft: 24, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'dashboard' ? '#1565c0' : '#fff', color: page === 'dashboard' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Dashboard</button>
-        )}
-        {profile.role === 'teacher' && (
-          <button onClick={() => setPage('attendance')} style={{ marginLeft: 8, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'attendance' ? '#1565c0' : '#fff', color: page === 'attendance' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Attendance</button>
-        )}
-        <button onClick={() => setPage('reports')} style={{ marginLeft: 8, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'reports' ? '#1565c0' : '#fff', color: page === 'reports' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Reports</button>
-        {profile.role === 'head' && (
-          <button onClick={() => setPage('profile')} style={{ marginLeft: 8, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'profile' ? '#1565c0' : '#fff', color: page === 'profile' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Students</button>
-        )}
-        <div style={{ flex: 1 }} />
-        <div ref={dropdownRef} style={{ position: 'relative', marginRight: 16 }}>
-          <button
-            onClick={() => setDropdownOpen((open) => !open)}
-            style={{
-              padding: '8px 16px',
-              border: 'none',
-              borderRadius: 4,
-              background: dropdownOpen ? '#1565c0' : '#fff',
-              color: dropdownOpen ? '#fff' : '#1976d2',
-              fontWeight: 600,
-              cursor: 'pointer',
-              minWidth: 120,
-            }}
-          >
-            {profile.name} ({profile.role === 'head' ? 'District Official' : profile.role}) ▼
-          </button>
-          {dropdownOpen && (
-            <div style={{
-              position: 'absolute',
-              right: 0,
-              top: '110%',
-              background: '#fff',
-              color: '#222',
-              borderRadius: 8,
-              boxShadow: '0 2px 8px #0002',
-              minWidth: 260,
-              zIndex: 10,
-              padding: 16,
-              fontSize: 15,
-            }}>
-              <div style={{ marginBottom: 10 }}><strong>Name:</strong> {profile.name}</div>
-              <div style={{ marginBottom: 10 }}><strong>Email:</strong> {profile.email}</div>
-              {profile.role === 'head' && (
-                <div style={{ marginBottom: 10 }}><strong>District:</strong> {district ? district.name : 'Loading...'}</div>
-              )}
-              {profile.role === 'teacher' && (
-                <>
-                  <div style={{ marginBottom: 10 }}><strong>School:</strong> {school ? school.name : 'Loading...'}</div>
-                  <div style={{ marginBottom: 10 }}><strong>District:</strong> {district ? district.name : 'Loading...'}</div>
-                  <div style={{ marginBottom: 10 }}><strong>Classes Taught:</strong> {classes.length > 0 ? classes.join(', ') : 'None'}</div>
-                </>
-              )}
-              {profile.role !== 'head' && profile.role !== 'teacher' && (
-                <>
-                  <div style={{ marginBottom: 10 }}><strong>School:</strong> {school ? school.name : 'Loading...'}</div>
-                  <div style={{ marginBottom: 10 }}><strong>District:</strong> {district ? district.name : 'Loading...'}</div>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-        <button onClick={handleLogout} style={{ padding: '8px 16px', border: 'none', borderRadius: 4, background: '#fff', color: '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Logout</button>
-      </nav>
+  // Debug logging
+  console.log('App rendered with:', { profile, page, session: !!session });
+
+  try {
+    // Navigation pane
+    return (
       <div>
-        {page === 'dashboard' && profile.role !== 'head' && <Dashboard profile={profile} />}
-        {page === 'attendance' && profile.role === 'teacher' && <Attendance profile={profile} onAttendanceSubmitted={() => setPage('dashboard')} />}
-        {page === 'reports' && <Reports profile={profile} />}
-        {page === 'profile' && profile.role === 'head' && <Profile profile={profile} />}
+        <nav style={{ display: 'flex', gap: 16, alignItems: 'center', background: '#1976d2', color: '#fff', padding: '12px 24px', marginBottom: 32, position: 'relative' }}>
+          <span style={{ fontWeight: 700, fontSize: 20, letterSpacing: 1 }}>Komeza Wige</span>
+          {profile.role !== 'head' && (
+            <button onClick={() => setPage('dashboard')} style={{ marginLeft: 24, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'dashboard' ? '#1565c0' : '#fff', color: page === 'dashboard' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Dashboard</button>
+          )}
+          {profile.role === 'teacher' && (
+            <button onClick={() => setPage('attendance')} style={{ marginLeft: 8, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'attendance' ? '#1565c0' : '#fff', color: page === 'attendance' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Attendance</button>
+          )}
+          <button onClick={() => setPage('reports')} style={{ marginLeft: 8, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'reports' ? '#1565c0' : '#fff', color: page === 'reports' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Reports</button>
+          {profile.role === 'head' && (
+            <button onClick={() => setPage('profile')} style={{ marginLeft: 8, padding: '8px 16px', border: 'none', borderRadius: 4, background: page === 'profile' ? '#1565c0' : '#fff', color: page === 'profile' ? '#fff' : '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Students</button>
+          )}
+          <div style={{ flex: 1 }} />
+          <div ref={dropdownRef} style={{ position: 'relative', marginRight: 16 }}>
+            <button
+              onClick={() => setDropdownOpen((open) => !open)}
+              style={{
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: 4,
+                background: dropdownOpen ? '#1565c0' : '#fff',
+                color: dropdownOpen ? '#fff' : '#1976d2',
+                fontWeight: 600,
+                cursor: 'pointer',
+                minWidth: 120,
+              }}
+            >
+              {profile.name} ({profile.role === 'head' ? 'District Official' : profile.role}) ▼
+            </button>
+            {dropdownOpen && (
+              <div style={{
+                position: 'absolute',
+                right: 0,
+                top: '110%',
+                background: '#fff',
+                color: '#222',
+                borderRadius: 8,
+                boxShadow: '0 2px 8px #0002',
+                minWidth: 260,
+                zIndex: 10,
+                padding: 16,
+                fontSize: 15,
+              }}>
+                <div style={{ marginBottom: 10 }}><strong>Name:</strong> {profile.name}</div>
+                <div style={{ marginBottom: 10 }}><strong>Email:</strong> {profile.email}</div>
+                {profile.role === 'head' && (
+                  <div style={{ marginBottom: 10 }}><strong>District:</strong> {district ? district.name : 'Loading...'}</div>
+                )}
+                {profile.role === 'teacher' && (
+                  <>
+                    <div style={{ marginBottom: 10 }}><strong>School:</strong> {school ? school.name : 'Loading...'}</div>
+                    <div style={{ marginBottom: 10 }}><strong>District:</strong> {district ? district.name : 'Loading...'}</div>
+                    <div style={{ marginBottom: 10 }}><strong>Classes Taught:</strong> {classes.length > 0 ? classes.join(', ') : 'None'}</div>
+                  </>
+                )}
+                {profile.role !== 'head' && profile.role !== 'teacher' && (
+                  <>
+                    <div style={{ marginBottom: 10 }}><strong>School:</strong> {school ? school.name : 'Loading...'}</div>
+                    <div style={{ marginBottom: 10 }}><strong>District:</strong> {district ? district.name : 'Loading...'}</div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+          <button onClick={handleLogout} style={{ padding: '8px 16px', border: 'none', borderRadius: 4, background: '#fff', color: '#1976d2', fontWeight: 600, cursor: 'pointer' }}>Logout</button>
+        </nav>
+        <div>
+          {page === 'dashboard' && profile.role !== 'head' && <Dashboard profile={profile} />}
+          {page === 'attendance' && profile.role === 'teacher' && <Attendance profile={profile} onAttendanceSubmitted={() => setPage('dashboard')} />}
+          {page === 'reports' && <Reports profile={profile} />}
+          {page === 'profile' && profile.role === 'head' && <Profile profile={profile} />}
+        </div>
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('App render error:', error);
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>Something went wrong</h2>
+        <p>Error: {error.message}</p>
+        <button onClick={() => window.location.reload()} style={{ padding: '10px 20px', marginTop: '10px', background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
+          Reload Page
+        </button>
+      </div>
+    );
+  }
 }
 
 export default App;

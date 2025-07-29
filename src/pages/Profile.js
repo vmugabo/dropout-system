@@ -38,7 +38,7 @@ export default function Profile({ profile }) {
   const loadHeadData = async () => {
     // Load schools in district
     const { data: schoolsData } = await supabase
-      .from('school')
+        .from('school')
       .select('*')
       .eq('district_id', profile.district_id);
     setSchools(schoolsData || []);
@@ -104,7 +104,7 @@ export default function Profile({ profile }) {
       
       if (alertsError) {
         console.error('Error loading alerts:', alertsError);
-      } else {
+    } else {
         setAlerts(alertsData || []);
       }
 
@@ -471,6 +471,6 @@ export default function Profile({ profile }) {
       </div>
     </div>
   );
-}
+} 
 
  

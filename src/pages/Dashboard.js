@@ -14,8 +14,7 @@ export default function Dashboard({ profile }) {
   const [performanceMetrics, setPerformanceMetrics] = useState({
     totalStudents: 0,
     avgAttendanceRate: 0,
-    atRiskCount: 0,
-    interventionSuccessRate: 0
+    atRiskCount: 0
   });
   const [recentAlerts, setRecentAlerts] = useState([]);
 
@@ -176,8 +175,7 @@ export default function Dashboard({ profile }) {
         setPerformanceMetrics({
           totalStudents: 0,
           avgAttendanceRate: 0,
-          atRiskCount: alerts.length,
-          interventionSuccessRate: 0
+          atRiskCount: alerts.length
         });
         return;
       }
@@ -200,8 +198,7 @@ export default function Dashboard({ profile }) {
       setPerformanceMetrics({
         totalStudents: students.length,
         avgAttendanceRate: Math.round(avgAttendanceRate * 10) / 10,
-        atRiskCount: alerts.length,
-        interventionSuccessRate: 75 // Placeholder - would need intervention tracking table
+        atRiskCount: alerts.length
       });
     } catch (error) {
       console.error('Error in loadAnalytics:', error);
@@ -345,12 +342,7 @@ export default function Dashboard({ profile }) {
           icon="⚠️"
           color="#ed6c02"
         />
-        <MetricCard
-          title="Intervention Success"
-          value={`${performanceMetrics.interventionSuccessRate}%`}
-          icon="✅"
-          color="#9c27b0"
-        />
+
       </div>
 
       {/* Main Content Grid */}
